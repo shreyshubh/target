@@ -24,7 +24,7 @@ app.get('/health', (_, res) => res.json({ status: 'ok' }));
 
 // ── Serve React frontend in production ───────────────────────
 if (isProd) {
-  const distPath = path.join(__dirname, '../../frontend/dist');
+  const distPath = path.join(__dirname, '../frontend/dist');
   app.use(express.static(distPath));
   // Catch-all: send index.html for any non-API route (SPA routing)
   // Express 5 requires named wildcard parameter syntax
