@@ -92,4 +92,30 @@ router.post('/records/bulk', async (req, res) => {
   }
 });
 
+// POST to toggle a holiday date
+router.post('/holidays/toggle', async (req, res) => {
+  try {
+    const { date } = req.body;
+    const doc = await getAttendanceDoc();
+    
+    // Ensure holidays array exists
+    if (!doc.holidays) doc.holidays = [];
+    
+    const index = doc.holidays.indexOf(date);
+    if (index > -1) {
+      // Remove it if it exists
+      doc.holidays.splice(index, 1);
+    } else {
+      // Add it if it doesn't
+      doc.holidays.push(date);
+    }
+    
+    // Note for mongoose array modifications we generally need save()
+    await doc.save();
+    res.json(doc);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

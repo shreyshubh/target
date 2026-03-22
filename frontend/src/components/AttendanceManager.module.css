@@ -304,6 +304,39 @@
   opacity: 1;
 }
 
+.holidayBtn {
+  margin-left: auto;
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.holidayActive {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.holidayState {
+  text-align: center;
+  padding: 3rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px dashed #10b981;
+  border-radius: 16px;
+  color: #10b981;
+}
+
+.holidayState h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
 .dayNameDisplay {
   font-weight: 700;
   font-size: 1.2rem;
@@ -406,6 +439,21 @@
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.successCircle {
+  background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box, 
+              linear-gradient(135deg, #10b981, #34d399) border-box;
+}
+
+.warningCircle {
+  background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box, 
+              linear-gradient(135deg, #f59e0b, #fbbf24) border-box;
+}
+
+.dangerCircle {
+  background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box, 
+              linear-gradient(135deg, #ef4444, #f87171) border-box;
+}
+
 .bigCircle:hover {
   transform: scale(1.05);
 }
@@ -468,13 +516,21 @@
 
 .statBar {
   height: 100%;
-  background: linear-gradient(90deg, var(--success), #34d399);
+  background: linear-gradient(90deg, #10b981, #34d399); /* success by default */
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 6px;
 }
 
+.successBar {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.warningBar {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
 .dangerBar {
-  background: linear-gradient(90deg, var(--danger), #f87171);
+  background: linear-gradient(90deg, #ef4444, #f87171);
 }
 
 .statNumbers {
@@ -483,6 +539,52 @@
   font-size: 1rem;
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+/* Calendar Grid */
+.calendarContainer {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.calDay {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.calNeutral { background: var(--surface-raised); }
+.calAllPresent { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981; }
+.calSomePresent { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #f59e0b; }
+.calAbsent { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+.calHoliday { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #3b82f6; }
+
+.calLegend {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  justify-content: center;
+}
+
+.calLegend span {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
 }
 
 .loading {

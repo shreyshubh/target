@@ -28,6 +28,8 @@ const AttendanceSchema = new mongoose.Schema(
       of: { type: Map, of: String },
       default: {},
     },
+    // Array of date strings marked as holidays: ["YYYY-MM-DD"]
+    holidays: [{ type: String }],
   },
   { timestamps: true }
 );

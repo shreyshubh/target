@@ -18,7 +18,7 @@
   flex-wrap: wrap; /* Allows wrapping on very small screens */
 }
 
-.mainNav button {
+.mainNav a {
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-secondary);
@@ -32,9 +32,10 @@
   overflow: hidden;
   font-family: inherit;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
-.mainNav button::before {
+.mainNav a::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -48,17 +49,17 @@
   z-index: -1;
 }
 
-.mainNav button:hover::before {
+.mainNav a:hover::before {
   transform: translate(-50%, -50%) scale(1);
   opacity: 0.3;
 }
 
-.mainNav button:hover {
+.mainNav a:hover {
   color: var(--text-primary);
   transform: translateY(-2px);
 }
 
-.mainNav button.activeNav {
+.mainNav a.activeNav {
   color: #fff;
   background: var(--accent);
   border-color: var(--accent);
@@ -66,7 +67,7 @@
   font-weight: 600;
 }
 
-.mainNav button.activeNav:hover {
+.mainNav a.activeNav:hover {
   transform: none;
 }
 
@@ -90,7 +91,7 @@
     padding: 10px;
     gap: 10px;
   }
-  .mainNav button {
+  .mainNav a {
     flex: 1 1 calc(33% - 10px);
     padding: 10px 12px;
     font-size: 0.9rem;

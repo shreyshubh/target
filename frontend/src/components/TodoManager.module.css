@@ -27,12 +27,18 @@
 
 .addForm {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   margin-bottom: 2.5rem;
 }
 
-.input {
-  flex: 1;
+.inputsRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.input, .selectInput, .dateInput {
   padding: 14px 20px;
   border-radius: 12px;
   border: 1px solid var(--border);
@@ -42,6 +48,20 @@
   font-size: 1.05rem;
   transition: all 0.3s ease;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.selectInput, .dateInput {
+  flex: 0 1 auto;
+}
+
+.selectInput option {
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 .input:focus {
@@ -154,12 +174,45 @@
   border-color: var(--accent);
 }
 
+.todoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .todoText {
   font-size: 1.15rem;
   font-weight: 500;
   color: var(--text-primary);
   transition: all 0.3s ease;
   word-break: break-word;
+}
+
+.todoMeta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.priorityBadge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid currentColor;
+}
+
+.dueDateBadge {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dragging {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+  border-color: var(--accent) !important;
+  z-index: 100;
 }
 
 .deleteBtn {
@@ -220,10 +273,10 @@
   .title {
     font-size: 1.6rem;
   }
-  .addForm {
+  .inputsRow {
     flex-direction: column;
   }
-  .input {
+  .input, .selectInput, .dateInput {
     width: 100%;
   }
   .addButton {

@@ -1,88 +1,49 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import {
-  fetchAttendance,
-  updateSubjects,
-  updateTimetable,
-  updateDailyRecord,
-  saveBulkRecords
-} from '../api';
+import React, { useState, useMemo } from 'react';
+import { useAttendance } from '../hooks/useAttendance';
 import styles from './AttendanceManager.module.css';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export default function AttendanceManager() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({ subjects: [], timetable: {}, records: {} });
+  const { data, isLoading, isError, updateSubjects, updateTimetable, updateDailyRecord, toggleHoliday } = useAttendance();
   const [activeTab, setActiveTab] = useState('entry'); // 'setup', 'entry', 'analytics'
-
-  // Entry tab state
+  
   const [selectedDate, setSelectedDate] = useState(() => {
     const d = new Date();
     return d.toISOString().split('T')[0];
   });
-
-  // Setup tab state
+  
   const [newSubject, setNewSubject] = useState('');
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const resp = await fetchAttendance();
-      setData(resp);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddSubject = async (e) => {
     e.preventDefault();
     if (!newSubject.trim()) return;
     const subjId = 'sub_' + Date.now();
-    const newSubjObj = { id: subjId, name: newSubject.trim(), totalClasses: 0, attendedClasses: 0 };
-    const updatedSubjects = [...data.subjects, newSubjObj];
+    const updatedSubjects = [...data.subjects, { id: subjId, name: newSubject.trim(), totalClasses: 0, attendedClasses: 0 }];
     try {
-      setData((prev) => ({ ...prev, subjects: updatedSubjects }));
       await updateSubjects(updatedSubjects);
       setNewSubject('');
-    } catch (err) {
-      console.error(err);
-      loadData();
-    }
+    } catch (err) { console.error(err); }
   };
 
   const handleManualSubjectUpdate = async (id, field, value) => {
     const val = parseInt(value, 10);
     if (isNaN(val) || val < 0) return;
     const updatedSubjects = data.subjects.map((s) => (s.id === id ? { ...s, [field]: val } : s));
-    setData((prev) => ({ ...prev, subjects: updatedSubjects }));
-    try {
-      await updateSubjects(updatedSubjects);
-    } catch (err) {
-      console.error(err);
-    }
+    try { await updateSubjects(updatedSubjects); } catch (err) { console.error(err); }
   };
 
   const handleDeleteSubject = async (id) => {
     if(!window.confirm("Delete this subject?")) return;
     const updatedSubjects = data.subjects.filter((s) => s.id !== id);
-    // Also remove from timetable
     const updatedTimetable = { ...data.timetable };
     for (let day in updatedTimetable) {
       updatedTimetable[day] = updatedTimetable[day].filter((sid) => sid !== id);
     }
-    setData((prev) => ({ ...prev, subjects: updatedSubjects, timetable: updatedTimetable }));
     try {
       await updateSubjects(updatedSubjects);
       await updateTimetable(updatedTimetable);
-    } catch (err) {
-      console.error(err);
-      loadData();
-    }
+    } catch (err) { console.error(err); }
   };
 
   const handleToggleTimetable = async (dayIndex, subjectId) => {
@@ -90,15 +51,7 @@ export default function AttendanceManager() {
     const updatedList = list.includes(subjectId)
       ? list.filter((id) => id !== subjectId)
       : [...list, subjectId];
-      
-    const updatedTimetable = { ...data.timetable, [dayIndex]: updatedList };
-    setData((prev) => ({ ...prev, timetable: updatedTimetable }));
-    try {
-      await updateTimetable(updatedTimetable);
-    } catch(err) {
-      console.error(err);
-      loadData();
-    }
+    try { await updateTimetable({ ...data.timetable, [dayIndex]: updatedList }); } catch(err) { console.error(err); }
   };
 
   const handleReorder = async (dayIndex, currentIndex, direction) => {
@@ -106,49 +59,33 @@ export default function AttendanceManager() {
     const newIndex = currentIndex + direction;
     if (newIndex < 0 || newIndex >= list.length) return;
     
-    // Swap
     const temp = list[currentIndex];
     list[currentIndex] = list[newIndex];
     list[newIndex] = temp;
 
-    const updatedTimetable = { ...data.timetable, [dayIndex]: list };
-    setData((prev) => ({ ...prev, timetable: updatedTimetable }));
-    try {
-      await updateTimetable(updatedTimetable);
-    } catch(err) {
-      console.error(err);
-      loadData();
-    }
+    try { await updateTimetable({ ...data.timetable, [dayIndex]: list }); } catch(err) { console.error(err); }
   };
 
   const handleMarkAttendance = async (subjectId, status) => {
-    try {
-      // Optimistic update
-      const currentRecords = data.records || {};
-      const dateRecords = currentRecords[selectedDate] || {};
-      
-      const updatedRecords = {
-        ...currentRecords,
-        [selectedDate]: { ...dateRecords, [subjectId]: status }
-      };
-
-      setData((prev) => ({ ...prev, records: updatedRecords }));
-      await updateDailyRecord(selectedDate, subjectId, status);
-    } catch (err) {
-      console.error(err);
-      loadData();
-    }
+    try { await updateDailyRecord({ date: selectedDate, subjectId, status }); } catch(err) { console.error(err); }
   };
 
-  // Compute analytics
+  const handleToggleHoliday = async () => {
+    try { await toggleHoliday(selectedDate); } catch(err) { console.error(err); }
+  };
+
   const analytics = useMemo(() => {
     const stats = {};
+    if (!data.subjects) return { list: [], overallPercentage: 0, overallTotal: 0, overallAttended: 0 };
+
     data.subjects.forEach(s => {
       stats[s.id] = { name: s.name, total: parseFloat(s.totalClasses) || 0, attended: parseFloat(s.attendedClasses) || 0 };
     });
 
-    // Add daily records to stats
+    const holidays = data.holidays || [];
+
     Object.keys(data.records || {}).forEach(date => {
+      if (holidays.includes(date)) return; // Exclude holidays
       const dayData = data.records[date];
       Object.keys(dayData).forEach(subjId => {
         if (!stats[subjId]) return;
@@ -165,11 +102,11 @@ export default function AttendanceManager() {
     const list = Object.values(stats).map(item => {
       overallTotal += item.total;
       overallAttended += item.attended;
-      const percentage = item.total === 0 ? 0 : Math.round((item.attended / item.total) * 100);
+      const percentage = item.total === 0 ? 0 : Number(((item.attended / item.total) * 100).toFixed(2));
       return { ...item, percentage };
     });
 
-    const overallPercentage = overallTotal === 0 ? 0 : Math.round((overallAttended / overallTotal) * 100);
+    const overallPercentage = overallTotal === 0 ? 0 : Number(((overallAttended / overallTotal) * 100).toFixed(2));
 
     return { list, overallPercentage, overallTotal, overallAttended };
   }, [data]);
@@ -229,10 +166,7 @@ export default function AttendanceManager() {
               return (
                 <>
                   {activeSubjects.map((s, index) => (
-                    <div 
-                      key={s.id} 
-                      className={`${styles.timeSlot} ${styles.activeSlot}`}
-                    >
+                    <div key={s.id} className={`${styles.timeSlot} ${styles.activeSlot}`}>
                       <div className={styles.slotContent} onClick={() => handleToggleTimetable(dIdx, s.id)}>
                         {s.name}
                       </div>
@@ -253,11 +187,7 @@ export default function AttendanceManager() {
                     </div>
                   ))}
                   {inactiveSubjects.map(s => (
-                    <div 
-                      key={s.id} 
-                      className={styles.timeSlot}
-                      onClick={() => handleToggleTimetable(dIdx, s.id)}
-                    >
+                    <div key={s.id} className={styles.timeSlot} onClick={() => handleToggleTimetable(dIdx, s.id)}>
                       <div className={styles.slotContent}>
                         {s.name}
                       </div>
@@ -273,10 +203,6 @@ export default function AttendanceManager() {
   );
 
   const renderEntryTab = () => {
-    const dayOfWeek = new Date(selectedDate).getDay(); // 0 is Sunday
-    // Adjust logic if timezone affects getDay, but assuming local inputs work fine since input type="date" yields YYYY-MM-DD
-    
-    // Proper local date parsing to get the correct day of the week
     const [year, month, day] = selectedDate.split('-').map(Number);
     const localDate = new Date(year, month - 1, day);
     const localDayOfWeek = localDate.getDay();
@@ -285,6 +211,7 @@ export default function AttendanceManager() {
     const scheduledSubjects = scheduledSubjectIds.map(id => data.subjects.find(s => s.id === id)).filter(Boolean);
     
     const dayRecords = (data.records || {})[selectedDate] || {};
+    const isHoliday = (data.holidays || []).includes(selectedDate);
 
     return (
       <div className={styles.entryContainer}>
@@ -295,17 +222,28 @@ export default function AttendanceManager() {
             value={selectedDate} 
             onChange={(e) => setSelectedDate(e.target.value)} 
             className={styles.dateInput}
-            max={new Date().toISOString().split('T')[0]} // Max today
+            max={new Date().toISOString().split('T')[0]} 
           />
           <div className={styles.dayNameDisplay}>{DAYS[localDayOfWeek]}</div>
+          <button 
+            className={`${styles.holidayBtn} ${isHoliday ? styles.holidayActive : ''}`}
+            onClick={handleToggleHoliday}
+          >
+            {isHoliday ? '🌴 Holiday' : 'Mark as Holiday'}
+          </button>
         </div>
 
-        {scheduledSubjects.length === 0 ? (
+        {isHoliday ? (
+          <div className={styles.holidayState}>
+            <h3>Enjoy your Holiday! 🌴</h3>
+            <p>Classes scheduled for today won't count towards your total attendance counts.</p>
+          </div>
+        ) : scheduledSubjects.length === 0 ? (
           <div className={styles.emptyState}>No classes scheduled for this day in the timetable.</div>
         ) : (
           <div className={styles.classList}>
             {scheduledSubjects.map(s => {
-              const status = dayRecords[s.id]; // 'present' | 'absent' | undefined
+              const status = dayRecords[s.id];
               return (
                 <div key={s.id} className={styles.classItem}>
                   <div className={styles.className}>{s.name}</div>
@@ -332,11 +270,61 @@ export default function AttendanceManager() {
     );
   };
 
+  const renderCalendarGrid = () => {
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const daysArray = Array.from({length: daysInMonth}, (_, i) => {
+      let d = new Date(year, month, i + 1);
+      const offset = d.getTimezoneOffset()
+      d = new Date(d.getTime() - (offset*60*1000))
+      return d.toISOString().split('T')[0]
+    });
+
+    return (
+      <div className={styles.calendarContainer}>
+        <h3 className={styles.subjectBreakdownTitle}>This Month Calendar</h3>
+        <div className={styles.calendarGrid}>
+          {daysArray.map(dateStr => {
+            const isHol = (data.holidays || []).includes(dateStr);
+            const r = (data.records || {})[dateStr] || {};
+            const keys = Object.keys(r);
+            let stateClass = styles.calNeutral;
+            if (isHol) {
+              stateClass = styles.calHoliday;
+            } else if (keys.length > 0) {
+              const presents = keys.filter(k => r[k] === 'present').length;
+              if (presents === keys.length && presents > 0) stateClass = styles.calAllPresent;
+              else if (presents > 0) stateClass = styles.calSomePresent;
+              else stateClass = styles.calAbsent;
+            }
+            return (
+              <div key={dateStr} className={`${styles.calDay} ${stateClass}`} title={dateStr}>
+                {dateStr.split('-')[2]}
+              </div>
+            );
+          })}
+        </div>
+        <div className={styles.calLegend}>
+          <span className={styles.calAllPresent}>All Present</span>
+          <span className={styles.calSomePresent}>Partial</span>
+          <span className={styles.calAbsent}>Absent</span>
+          <span className={styles.calHoliday}>Holiday</span>
+        </div>
+      </div>
+    );
+  };
+
   const renderAnalyticsTab = () => (
     <div className={styles.analyticsContainer}>
       <div className={styles.overallStat}>
-        <h3>Overall Attendance</h3>
-        <div className={styles.bigCircle}>
+        <h3>Overall Regular Attendance</h3>
+        <div className={`${styles.bigCircle} ${
+          analytics.overallPercentage < 65 ? styles.dangerCircle :
+          analytics.overallPercentage < 75 ? styles.warningCircle :
+          styles.successCircle
+        }`}>
           <span className={styles.percentageText}>{analytics.overallPercentage}%</span>
           <span className={styles.fractionText}>{analytics.overallAttended} / {analytics.overallTotal}</span>
         </div>
@@ -349,7 +337,11 @@ export default function AttendanceManager() {
             <div className={styles.statName}>{s.name}</div>
             <div className={styles.statBarWrap}>
               <div 
-                className={`${styles.statBar} ${s.percentage < 75 ? styles.dangerBar : ''}`} 
+                className={`${styles.statBar} ${
+                  s.percentage < 65 ? styles.dangerBar : 
+                  s.percentage < 75 ? styles.warningBar : 
+                  styles.successBar
+                }`} 
                 style={{ width: `${Math.min(s.percentage, 100)}%` }}
               ></div>
             </div>
@@ -360,10 +352,13 @@ export default function AttendanceManager() {
           </div>
         ))}
       </div>
+      
+      {renderCalendarGrid()}
     </div>
   );
 
-  if (loading) return <div className={styles.loading}>Loading Attendance Data...</div>;
+  if (isLoading) return <div className={styles.loading}>Loading Attendance Data...</div>;
+  if (isError) return <div className={styles.loading}>Error loading data.</div>;
 
   return (
     <div className={styles.container}>

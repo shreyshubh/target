@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import TRACKS from './data/tracks';
 import { fetchProgress, saveProgress } from './api';
 import Header from './components/Header';
@@ -31,8 +33,8 @@ function countProgress(progress) {
 const DEBOUNCE_MS = 800;
 
 export default function App() {
-  const [mainView, setMainView] = useState('syllabus'); // 'syllabus', 'attendance', 'todo'
   const [activeTab, setActiveTab] = useState(TRACKS[0].id);
+  const location = useLocation();
   const [progress, setProgress] = useState(buildInitialProgress);
   const [saveStatus, setSaveStatus] = useState('idle'); // idle | saving | saved | error
   const [loading, setLoading] = useState(true);
@@ -82,49 +84,52 @@ export default function App() {
       <Header done={done} total={total} />
       
       <div className="mainNav">
-        <button className={mainView === 'syllabus' ? "activeNav" : ''} onClick={() => setMainView('syllabus')}>Syllabus</button>
-        <button className={mainView === 'attendance' ? "activeNav" : ''} onClick={() => setMainView('attendance')}>Attendance</button>
-        <button className={mainView === 'todo' ? "activeNav" : ''} onClick={() => setMainView('todo')}>To-Do List</button>
+        <NavLink to="/syllabus" className={({ isActive }) => isActive ? "activeNav" : ""}>Syllabus</NavLink>
+        <NavLink to="/attendance" className={({ isActive }) => isActive ? "activeNav" : ""}>Attendance</NavLink>
+        <NavLink to="/todo" className={({ isActive }) => isActive ? "activeNav" : ""}>To-Do List</NavLink>
       </div>
 
-      {mainView === 'syllabus' && (
-        <>
-          {/* Save status toast */}
-          <div className={`${styles.toast} ${styles[saveStatus]}`}>
-            {saveStatus === 'saving' && '⏳ Saving…'}
-            {saveStatus === 'saved' && '✅ Progress saved'}
-            {saveStatus === 'error' && '❌ Save failed — check connection'}
-          </div>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/syllabus" element={
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }}>
+              <div className={`${styles.toast} ${styles[saveStatus]}`}>
+              {saveStatus === 'saving' && '⏳ Saving…'}
+              {saveStatus === 'saved' && '✅ Progress saved'}
+              {saveStatus === 'error' && '❌ Save failed — check connection'}
+            </div>
+            <Tabs tracks={TRACKS} activeId={activeTab} onSelect={setActiveTab} />
+            {loading ? (
+              <div className={styles.loading}>Loading your progress…</div>
+            ) : (
+              <main className={styles.main}>
+                {activeTrack && (
+                  <TrackPanel
+                    track={activeTrack}
+                    progress={progress}
+                    onToggle={handleToggle}
+                  />
+                )}
+              </main>
+            )}
+            </motion.div>
+          } />
+          
+          <Route path="/attendance" element={
+            <motion.main className="mainContent" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }}>
+              <AttendanceManager />
+            </motion.main>
+          } />
+          
+          <Route path="/todo" element={
+            <motion.main className="mainContent" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }}>
+              <TodoManager />
+            </motion.main>
+          } />
 
-          <Tabs tracks={TRACKS} activeId={activeTab} onSelect={setActiveTab} />
-
-          {loading ? (
-            <div className={styles.loading}>Loading your progress…</div>
-          ) : (
-            <main className={styles.main}>
-              {activeTrack && (
-                <TrackPanel
-                  track={activeTrack}
-                  progress={progress}
-                  onToggle={handleToggle}
-                />
-              )}
-            </main>
-          )}
-        </>
-      )}
-
-      {mainView === 'attendance' && (
-        <main className="mainContent">
-          <AttendanceManager />
-        </main>
-      )}
-
-      {mainView === 'todo' && (
-        <main className="mainContent">
-          <TodoManager />
-        </main>
-      )}
+          <Route path="*" element={<Navigate to="/syllabus" replace />} />
+        </Routes>
+      </AnimatePresence>
 
     </div>
   );

@@ -25,11 +25,11 @@ export async function fetchTodos() {
   return res.json();
 }
 
-export async function createTodo(text) {
+export async function createTodo(payload) {
   const res = await fetch(`${BASE_URL}/todos`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to create todo');
   return res.json();
@@ -42,6 +42,26 @@ export async function toggleTodo(id, completed) {
     body: JSON.stringify({ completed }),
   });
   if (!res.ok) throw new Error('Failed to update todo');
+  return res.json();
+}
+
+export async function updateTodo(id, updates) {
+  const res = await fetch(`${BASE_URL}/todos/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) throw new Error('Failed to update todo');
+  return res.json();
+}
+
+export async function reorderTodosBulk(updates) {
+  const res = await fetch(`${BASE_URL}/todos/reorder/bulk`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ updates }),
+  });
+  if (!res.ok) throw new Error('Failed to reorder todos');
   return res.json();
 }
 
@@ -95,5 +115,15 @@ export async function saveBulkRecords(records) {
     body: JSON.stringify({ records }),
   });
   if (!res.ok) throw new Error('Failed to save bulk records');
+  return res.json();
+}
+
+export async function toggleHoliday(date) {
+  const res = await fetch(`${BASE_URL}/attendance/holidays/toggle`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date }),
+  });
+  if (!res.ok) throw new Error('Failed to toggle holiday');
   return res.json();
 }
