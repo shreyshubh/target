@@ -1,171 +1,232 @@
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 1.5rem;
-  background: var(--bg-card, #1e1e1e);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  color: var(--text-primary, #ffffff);
+  padding: 2rem;
+  background: var(--surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow);
+  color: var(--text-primary);
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
 .tabHeader {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 10px;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 15px;
 }
 
 .tabHeader button {
   background: transparent;
   border: none;
-  color: var(--text-muted, #888);
-  font-size: 1.1rem;
-  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: all 0.2s;
+  padding: 8px 20px;
+  border-radius: 30px;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
 }
 
 .tabHeader button:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-raised);
+  color: var(--text-primary);
 }
 
 .tabHeader button.activeTabBtn {
-  color: var(--accent-color, #646cff);
-  background: rgba(100, 108, 255, 0.1);
+  color: white;
+  background: var(--accent);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 /* Setup Tab */
 .setupContainer h3 {
   margin-top: 0;
-  color: #ddd;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
 }
 
 .addForm {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.input, .manualEntry input, .dateInput {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--border);
+  color: white;
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
 .input {
   flex: 1;
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid #333;
-  background: #2a2a2a;
-  color: white;
+  padding: 12px 18px;
+  font-size: 1rem;
+}
+
+.input:focus, .manualEntry input:focus, .dateInput:focus {
+  outline: none;
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 0 2px var(--accent-bg);
 }
 
 .btn {
-  padding: 0 20px;
-  background: var(--accent-color, #646cff);
+  padding: 0 24px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
 }
 
 .subjectList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
 .subjectCard {
-  background: #252525;
-  border: 1px solid #333;
-  padding: 15px;
-  border-radius: 8px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 16px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.subjectCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border-color: var(--border-strong);
 }
 
 .subjectHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .deleteBtn {
-  background: none;
+  background: rgba(239, 68, 68, 0.1);
   border: none;
-  color: #ff5555;
+  color: var(--danger);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.deleteBtn:hover {
+  background: var(--danger);
+  color: white;
+  transform: scale(1.1);
 }
 
 .manualEntry {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .manualEntry label {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
-  color: #aaa;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
   align-items: center;
 }
 
 .manualEntry input {
-  width: 60px;
-  background: #1a1a1a;
-  border: 1px solid #444;
-  color: white;
-  padding: 4px;
-  border-radius: 4px;
+  width: 70px;
+  padding: 6px 10px;
   text-align: right;
+  font-weight: 600;
 }
 
 .timetableTitle {
-  margin-top: 30px;
+  margin-top: 40px;
 }
 
 .timetableGrid {
   display: flex;
   overflow-x: auto;
-  gap: 10px;
-  padding-bottom: 15px;
+  gap: 12px;
+  padding-bottom: 20px;
 }
 
 .dayCol {
   flex: 1;
-  min-width: 120px;
+  min-width: 140px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .dayHead {
-  font-weight: bold;
+  font-weight: 600;
   text-align: center;
-  background: #333;
-  padding: 8px;
-  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
 }
 
 .timeSlot {
-  background: #222;
-  border: 1px solid #444;
-  padding: 10px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  padding: 12px 10px;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .timeSlot:hover {
-  background: #2a2a2a;
+  background: rgba(255, 255, 255, 0.05);
+  transform: scale(1.02);
+  color: var(--text-primary);
 }
 
 .activeSlot {
-  background: var(--accent-color, #646cff);
-  border-color: #646cff;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+.activeSlot:hover {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
 }
 
@@ -173,164 +234,230 @@
 .entryContainer {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .datePickerWrap {
   display: flex;
   align-items: center;
-  gap: 15px;
-  background: #252525;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #333;
+  gap: 16px;
+  background: var(--surface-raised);
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .dateInput {
-  background: #1a1a1a;
-  color: white;
-  border: 1px solid #444;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 1rem;
+  padding: 10px 14px;
 }
 .dateInput::-webkit-calendar-picker-indicator {
   filter: invert(1);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.dateInput::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 .dayNameDisplay {
-  font-weight: bold;
-  color: var(--accent-color, #646cff);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: 0.5px;
 }
 
 .classList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .classItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #252525;
-  padding: 15px 20px;
-  border-radius: 8px;
-  border: 1px solid #333;
+  background: var(--surface-raised);
+  padding: 20px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: transform 0.2s;
+}
+
+.classItem:hover {
+  transform: translateX(4px);
+  border-color: var(--border-strong);
 }
 
 .className {
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .actionBtns {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .statusBtn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background: #1a1a1a;
-  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: rgba(15, 23, 42, 0.5);
+  color: var(--text-secondary);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   transition: all 0.2s;
 }
 
-.presentActive {
-  background: #28a745;
-  border-color: #28a745;
+.statusBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
 }
 
-.absentActive {
-  background: #dc3545;
-  border-color: #dc3545;
+.presentActive {
+  background: linear-gradient(135deg,var(--success) 0%, #059669 100%);
+  border-color: var(--success);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
+.presentActive:hover { background: linear-gradient(135deg,var(--success) 0%, #059669 100%); color: white; }
+
+.absentActive {
+  background: linear-gradient(135deg,var(--danger) 0%, #dc2626 100%);
+  border-color: var(--danger);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+.absentActive:hover { background: linear-gradient(135deg,var(--danger) 0%, #dc2626 100%); color: white;}
 
 /* Analytics Tab */
 .analyticsContainer {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 40px;
+  align-items: center;
 }
 
 .overallStat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .bigCircle {
-  width: 150px;
-  height: 150px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  border: 8px solid var(--accent-color, #646cff);
+  border: 10px solid transparent;
+  background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box, 
+              linear-gradient(135deg, var(--accent), #818cf8) border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #252525;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bigCircle:hover {
+  transform: scale(1.05);
 }
 
 .percentageText {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, var(--text-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
 }
 
 .fractionText {
-  color: #888;
-  font-size: 1rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.subjectBreakdownTitle {
+  width: 100%;
+  text-align: left;
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
 }
 
 .statsGrid {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
 }
 
 .statCard {
-  background: #252525;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #333;
+  background: var(--surface-raised);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .statName {
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
 }
 
 .statBarWrap {
-  height: 10px;
-  background: #1a1a1a;
-  border-radius: 5px;
+  height: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .statBar {
   height: 100%;
-  background: #28a745;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--success), #34d399);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
 }
 
 .dangerBar {
-  background: #dc3545;
+  background: linear-gradient(90deg, var(--danger), #f87171);
 }
 
 .statNumbers {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
-  color: #aaa;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .loading {
   text-align: center;
-  padding: 2rem;
-  color: #888;
+  padding: 4rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 1.2rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }

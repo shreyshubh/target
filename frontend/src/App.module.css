@@ -1,7 +1,6 @@
 /* App layout */
 .app {
   min-height: 100vh;
-  background: var(--bg);
   color: var(--text-primary);
 }
 
