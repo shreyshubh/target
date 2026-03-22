@@ -101,6 +101,26 @@ export default function AttendanceManager() {
     }
   };
 
+  const handleReorder = async (dayIndex, currentIndex, direction) => {
+    const list = [...(data.timetable[dayIndex] || [])];
+    const newIndex = currentIndex + direction;
+    if (newIndex < 0 || newIndex >= list.length) return;
+    
+    // Swap
+    const temp = list[currentIndex];
+    list[currentIndex] = list[newIndex];
+    list[newIndex] = temp;
+
+    const updatedTimetable = { ...data.timetable, [dayIndex]: list };
+    setData((prev) => ({ ...prev, timetable: updatedTimetable }));
+    try {
+      await updateTimetable(updatedTimetable);
+    } catch(err) {
+      console.error(err);
+      loadData();
+    }
+  };
+
   const handleMarkAttendance = async (subjectId, status) => {
     try {
       // Optimistic update
@@ -201,18 +221,51 @@ export default function AttendanceManager() {
         {DAYS.map((day, dIdx) => (
           <div key={day} className={styles.dayCol}>
             <div className={styles.dayHead}>{day}</div>
-            {data.subjects.map(s => {
-              const isActive = (data.timetable[dIdx] || []).includes(s.id);
+            {(() => {
+              const activeIds = data.timetable[dIdx] || [];
+              const activeSubjects = activeIds.map(id => data.subjects.find(s => s.id === id)).filter(Boolean);
+              const inactiveSubjects = data.subjects.filter(s => !activeIds.includes(s.id));
+
               return (
-                <div 
-                  key={s.id} 
-                  className={`${styles.timeSlot} ${isActive ? styles.activeSlot : ''}`}
-                  onClick={() => handleToggleTimetable(dIdx, s.id)}
-                >
-                  {s.name}
-                </div>
+                <>
+                  {activeSubjects.map((s, index) => (
+                    <div 
+                      key={s.id} 
+                      className={`${styles.timeSlot} ${styles.activeSlot}`}
+                    >
+                      <div className={styles.slotContent} onClick={() => handleToggleTimetable(dIdx, s.id)}>
+                        {s.name}
+                      </div>
+                      <div className={styles.reorderBtns}>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleReorder(dIdx, index, -1); }}
+                          disabled={index === 0}
+                          className={styles.reorderBtn}
+                          title="Move Up"
+                        >▲</button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleReorder(dIdx, index, 1); }}
+                          disabled={index === activeSubjects.length - 1}
+                          className={styles.reorderBtn}
+                          title="Move Down"
+                        >▼</button>
+                      </div>
+                    </div>
+                  ))}
+                  {inactiveSubjects.map(s => (
+                    <div 
+                      key={s.id} 
+                      className={styles.timeSlot}
+                      onClick={() => handleToggleTimetable(dIdx, s.id)}
+                    >
+                      <div className={styles.slotContent}>
+                        {s.name}
+                      </div>
+                    </div>
+                  ))}
+                </>
               );
-            })}
+            })()}
           </div>
         ))}
       </div>
@@ -229,7 +282,7 @@ export default function AttendanceManager() {
     const localDayOfWeek = localDate.getDay();
 
     const scheduledSubjectIds = data.timetable[localDayOfWeek] || [];
-    const scheduledSubjects = data.subjects.filter(s => scheduledSubjectIds.includes(s.id));
+    const scheduledSubjects = scheduledSubjectIds.map(id => data.subjects.find(s => s.id === id)).filter(Boolean);
     
     const dayRecords = (data.records || {})[selectedDate] || {};
 
