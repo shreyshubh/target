@@ -1,0 +1,46 @@
+/* App layout */
+.app {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.main {
+  padding: 0 1.5rem 4rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Save status toast — slides in from top right */
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast.saving,
+.toast.saved,
+.toast.error {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.saved { color: #1D9E75; border-color: #1D9E7540; }
+.toast.error { color: #e05a5a; border-color: #e05a5a40; }

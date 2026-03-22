@@ -1,0 +1,57 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 5px 6px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.12s;
+  user-select: none;
+  outline: none;
+}
+.row:hover,
+.row:focus-visible {
+  background: var(--surface-raised);
+}
+.rowDone {
+  opacity: 0.65;
+}
+
+.check {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+.checkDone {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.checkmark {
+  display: block;
+  width: 9px;
+  height: 5px;
+  border-left: 1.5px solid white;
+  border-bottom: 1.5px solid white;
+  transform: rotate(-45deg) translateY(-1px);
+}
+
+.text {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  flex: 1;
+}
+.textDone {
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-strong);
+}
