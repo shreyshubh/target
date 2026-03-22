@@ -27,7 +27,8 @@ if (isProd) {
   const distPath = path.join(__dirname, '../../frontend/dist');
   app.use(express.static(distPath));
   // Catch-all: send index.html for any non-API route (SPA routing)
-  app.get('*', (_, res) => {
+  // Express 5 requires named wildcard parameter syntax
+  app.get('/{*path}', (_, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
