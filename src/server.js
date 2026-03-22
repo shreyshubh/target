@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const progressRoutes = require('./routes/progress.routes');
-
+const attendanceRoutes = require('./routes/attendance.routes');
+const todoRoutes = require('./routes/todo.routes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 const isProd = process.env.NODE_ENV === 'production';
@@ -18,7 +19,8 @@ app.use(express.json());
 
 // ── API Routes ───────────────────────────────────────────────
 app.use('/api/progress', progressRoutes);
-
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/todos', todoRoutes);
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
 

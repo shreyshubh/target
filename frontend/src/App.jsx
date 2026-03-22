@@ -4,7 +4,10 @@ import { fetchProgress, saveProgress } from './api';
 import Header from './components/Header';
 import Tabs from './components/Tabs';
 import TrackPanel from './components/TrackPanel';
+import TodoManager from './components/TodoManager';
+import AttendanceManager from './components/AttendanceManager';
 import styles from './App.module.css';
+import './AppNav.css';
 
 // Build the initial flat progress map from track data
 function buildInitialProgress() {
@@ -28,6 +31,7 @@ function countProgress(progress) {
 const DEBOUNCE_MS = 800;
 
 export default function App() {
+  const [mainView, setMainView] = useState('syllabus'); // 'syllabus', 'attendance', 'todo'
   const [activeTab, setActiveTab] = useState(TRACKS[0].id);
   const [progress, setProgress] = useState(buildInitialProgress);
   const [saveStatus, setSaveStatus] = useState('idle'); // idle | saving | saved | error
@@ -76,29 +80,52 @@ export default function App() {
   return (
     <div className={styles.app}>
       <Header done={done} total={total} />
-
-      {/* Save status toast */}
-      <div className={`${styles.toast} ${styles[saveStatus]}`}>
-        {saveStatus === 'saving' && '⏳ Saving…'}
-        {saveStatus === 'saved' && '✅ Progress saved'}
-        {saveStatus === 'error' && '❌ Save failed — check connection'}
+      
+      <div className={styles.mainNav}>
+        <button className={mainView === 'syllabus' ? styles.activeNav : ''} onClick={() => setMainView('syllabus')}>Syllabus</button>
+        <button className={mainView === 'attendance' ? styles.activeNav : ''} onClick={() => setMainView('attendance')}>Attendance</button>
+        <button className={mainView === 'todo' ? styles.activeNav : ''} onClick={() => setMainView('todo')}>To-Do List</button>
       </div>
 
-      <Tabs tracks={TRACKS} activeId={activeTab} onSelect={setActiveTab} />
+      {mainView === 'syllabus' && (
+        <>
+          {/* Save status toast */}
+          <div className={`${styles.toast} ${styles[saveStatus]}`}>
+            {saveStatus === 'saving' && '⏳ Saving…'}
+            {saveStatus === 'saved' && '✅ Progress saved'}
+            {saveStatus === 'error' && '❌ Save failed — check connection'}
+          </div>
 
-      {loading ? (
-        <div className={styles.loading}>Loading your progress…</div>
-      ) : (
-        <main className={styles.main}>
-          {activeTrack && (
-            <TrackPanel
-              track={activeTrack}
-              progress={progress}
-              onToggle={handleToggle}
-            />
+          <Tabs tracks={TRACKS} activeId={activeTab} onSelect={setActiveTab} />
+
+          {loading ? (
+            <div className={styles.loading}>Loading your progress…</div>
+          ) : (
+            <main className={styles.main}>
+              {activeTrack && (
+                <TrackPanel
+                  track={activeTrack}
+                  progress={progress}
+                  onToggle={handleToggle}
+                />
+              )}
+            </main>
           )}
+        </>
+      )}
+
+      {mainView === 'attendance' && (
+        <main className={styles.mainContent}>
+          <AttendanceManager />
         </main>
       )}
+
+      {mainView === 'todo' && (
+        <main className={styles.mainContent}>
+          <TodoManager />
+        </main>
+      )}
+
     </div>
   );
 }
