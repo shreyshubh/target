@@ -461,3 +461,48 @@
   from { opacity: 0; transform: translateY(15px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* ─── Responsive Enhancements ─── */
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+  .tabHeader {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tabHeader button {
+    flex: 1 1 auto;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+  .addForm {
+    flex-direction: column;
+  }
+  .btn {
+    width: 100%;
+    padding: 12px;
+  }
+  .subjectList, .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  .classItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .actionBtns {
+    width: 100%;
+    display: flex;
+  }
+  .statusBtn {
+    flex: 1;
+  }
+  .timetableGrid {
+    padding-bottom: 10px;
+  }
+  .dayCol {
+    min-width: 120px;
+  }
+}

@@ -81,10 +81,10 @@ export default function App() {
     <div className={styles.app}>
       <Header done={done} total={total} />
       
-      <div className={styles.mainNav}>
-        <button className={mainView === 'syllabus' ? styles.activeNav : ''} onClick={() => setMainView('syllabus')}>Syllabus</button>
-        <button className={mainView === 'attendance' ? styles.activeNav : ''} onClick={() => setMainView('attendance')}>Attendance</button>
-        <button className={mainView === 'todo' ? styles.activeNav : ''} onClick={() => setMainView('todo')}>To-Do List</button>
+      <div className="mainNav">
+        <button className={mainView === 'syllabus' ? "activeNav" : ''} onClick={() => setMainView('syllabus')}>Syllabus</button>
+        <button className={mainView === 'attendance' ? "activeNav" : ''} onClick={() => setMainView('attendance')}>Attendance</button>
+        <button className={mainView === 'todo' ? "activeNav" : ''} onClick={() => setMainView('todo')}>To-Do List</button>
       </div>
 
       {mainView === 'syllabus' && (
@@ -115,13 +115,13 @@ export default function App() {
       )}
 
       {mainView === 'attendance' && (
-        <main className={styles.mainContent}>
+        <main className="mainContent">
           <AttendanceManager />
         </main>
       )}
 
       {mainView === 'todo' && (
-        <main className={styles.mainContent}>
+        <main className="mainContent">
           <TodoManager />
         </main>
       )}

@@ -3,8 +3,9 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin: 20px auto 40px auto;
-  padding: 10px;
+  /* Reduced top margin, shifted slightly to blend better under the header */
+  margin: 10px auto 35px auto;
+  padding: 8px;
   width: fit-content;
   border-radius: 50px;
   background: var(--surface);
@@ -14,6 +15,7 @@
   box-shadow: var(--glass-shadow);
   position: relative;
   z-index: 10;
+  flex-wrap: wrap; /* Allows wrapping on very small screens */
 }
 
 .mainNav button {
@@ -78,4 +80,24 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive Adjustments ─── */
+@media (max-width: 600px) {
+  .mainNav {
+    width: 90%;
+    border-radius: 20px;
+    padding: 10px;
+    gap: 10px;
+  }
+  .mainNav button {
+    flex: 1 1 calc(33% - 10px);
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .mainContent {
+    padding: 0 10px;
+  }
 }
