@@ -2,11 +2,11 @@
 
 /* ─── Premium Design Tokens ─── */
 :root {
-  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #171d37 50%, #0d1123 100%);
-  --surface: rgba(30, 41, 59, 0.6); /* Glass surface */
-  --surface-raised: rgba(51, 65, 85, 0.7);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
+  --bg-gradient: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+  --surface: rgba(51, 65, 85, 0.6); /* Glass surface */
+  --surface-raised: rgba(71, 85, 105, 0.7);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.2);
   
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;

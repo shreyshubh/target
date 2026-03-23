@@ -55,7 +55,6 @@ router.post('/timetable', async (req, res) => {
 // POST to mark/update daily attendance records
 router.post('/records', async (req, res) => {
   try {
-    // Expected generic body shape: { date: "YYYY-MM-DD", subjectId: "sub1", status: "present"|"absent" }
     const { date, subjectId, status } = req.body;
     const doc = await getAttendanceDoc();
 
@@ -63,15 +62,20 @@ router.post('/records', async (req, res) => {
       doc.records = new Map();
     }
     
-    // Convert to js object to modify easily or use Map api
-    const recordsObj = Object.fromEntries(doc.records);
-    if (!recordsObj[date]) {
-      recordsObj[date] = {};
+    // Correct way to write to a Map of Maps in Mongoose
+    if (!doc.records.has(date)) {
+      doc.records.set(date, new Map());
     }
     
-    recordsObj[date][subjectId] = status;
+    const dayRecordMap = doc.records.get(date);
     
-    doc.records = recordsObj;
+    if (status === null || status === undefined) {
+      dayRecordMap.delete(subjectId);
+    } else {
+      dayRecordMap.set(subjectId, status);
+    }
+    
+    doc.markModified('records');
     await doc.save();
     res.json(doc);
   } catch (error) {

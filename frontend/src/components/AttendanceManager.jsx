@@ -66,8 +66,11 @@ export default function AttendanceManager() {
     try { await updateTimetable({ ...data.timetable, [dayIndex]: list }); } catch(err) { console.error(err); }
   };
 
-  const handleMarkAttendance = async (subjectId, status) => {
-    try { await updateDailyRecord({ date: selectedDate, subjectId, status }); } catch(err) { console.error(err); }
+  const handleMarkAttendance = async (subjectId, clickedStatus) => {
+    const dayRecords = (data.records || {})[selectedDate] || {};
+    const currentStatus = dayRecords[subjectId];
+    const newStatus = currentStatus === clickedStatus ? null : clickedStatus;
+    try { await updateDailyRecord({ date: selectedDate, subjectId, status: newStatus }); } catch(err) { console.error(err); }
   };
 
   const handleToggleHoliday = async () => {
