@@ -92,9 +92,14 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.forgotRow}>
-            <Link to="/forgot-password" className={styles.forgotLink}>
+            <button
+              type="button"
+              className={styles.forgotLink}
+              onClick={() => setError('Service is coming soon!')}
+              style={{ background: 'none', border: 'none', padding: 0, fontFamily: 'inherit', cursor: 'pointer' }}
+            >
               Forgot Password?
-            </Link>
+            </button>
           </div>
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
