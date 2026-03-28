@@ -10,6 +10,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 
 // Fix DNS for MongoDB Atlas SRV resolution
 dns.setServers(['1.1.1.1', '8.8.8.8']);
+// Fix for Render blocking outbound IPv6 connections (nodemailer ENETUNREACH)
+dns.setDefaultResultOrder('ipv4first');
 
 const progressRoutes = require('./routes/progress.routes');
 const attendanceRoutes = require('./routes/attendance.routes');
