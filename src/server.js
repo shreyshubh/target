@@ -21,6 +21,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const isProd = process.env.NODE_ENV === 'production';
 
+// Trust the reverse proxy (Render load balancer) so rate limiting identifies client IPs correctly
+app.set('trust proxy', 1);
+
 // ── Security Middleware ─────────────────────────────────────
 app.use(helmet({
   contentSecurityPolicy: isProd ? undefined : false,  // Disable CSP in dev (Vite needs inline scripts)
