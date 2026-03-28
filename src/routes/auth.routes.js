@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const rateLimit = require('express-rate-limit');
 const User = require('../models/User.model');
 const authMiddleware = require('../middleware/auth.middleware');
@@ -162,17 +162,13 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
     await user.save();
 
     // Send email
-    const emailUser = process.env.EMAIL_USER;
-    const emailPass = process.env.EMAIL_PASS;
+    const resendApiKey = process.env.RESEND_API_KEY;
 
-    if (emailUser && emailPass) {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user: emailUser, pass: emailPass },
-      });
+    if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
 
-      await transporter.sendMail({
-        from: `"Syllabus Tracker" <${emailUser}>`,
+      const { data, error } = await resend.emails.send({
+        from: 'Syllabus Tracker <onboarding@resend.dev>',
         to: user.email,
         subject: 'Password Reset Code',
         html: `
@@ -186,6 +182,10 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
           </div>
         `,
       });
+
+      if (error) {
+        console.error('Resend email error:', error);
+      }
     } else {
       // Dev mode: log the code
       console.log(`🔑 Password reset code for ${user.email}: ${code}`);
