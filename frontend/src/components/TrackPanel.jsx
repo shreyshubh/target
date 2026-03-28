@@ -8,7 +8,7 @@ export default function TrackPanel({ track, progress, onToggle }) {
         <div key={section.title} className={styles.section}>
           <div className={styles.sectionTitle}>{section.title}</div>
           {section.topics.map((topic, i) => {
-            const key = `${track.id}::${section.title}::${i}`;
+            const key = `${track.id}::${section.title}::${topic}`;
             return (
               <TopicRow
                 key={key}

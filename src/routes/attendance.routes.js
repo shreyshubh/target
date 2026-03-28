@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Attendance = require('../models/Attendance.model');
+const authMiddleware = require('../middleware/auth.middleware');
 
-// Default helper to get the single attendance document
-const getAttendanceDoc = async () => {
-  let doc = await Attendance.findOne();
+// All routes are protected
+router.use(authMiddleware);
+
+// Helper to get the user's attendance document (create if needed)
+const getAttendanceDoc = async (userId) => {
+  let doc = await Attendance.findOne({ userId });
   if (!doc) {
     doc = new Attendance({
+      userId,
       subjects: [],
       timetable: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] },
       records: {},
@@ -19,7 +24,7 @@ const getAttendanceDoc = async () => {
 // GET full attendance data
 router.get('/', async (req, res) => {
   try {
-    const doc = await getAttendanceDoc();
+    const doc = await getAttendanceDoc(req.user.id);
     res.json(doc);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -29,8 +34,8 @@ router.get('/', async (req, res) => {
 // POST to update subjects
 router.post('/subjects', async (req, res) => {
   try {
-    const { subjects } = req.body; // Expects an array of subjects
-    const doc = await getAttendanceDoc();
+    const { subjects } = req.body;
+    const doc = await getAttendanceDoc(req.user.id);
     doc.subjects = subjects;
     await doc.save();
     res.json(doc);
@@ -43,7 +48,7 @@ router.post('/subjects', async (req, res) => {
 router.post('/timetable', async (req, res) => {
   try {
     const { timetable } = req.body;
-    const doc = await getAttendanceDoc();
+    const doc = await getAttendanceDoc(req.user.id);
     doc.timetable = timetable;
     await doc.save();
     res.json(doc);
@@ -56,13 +61,12 @@ router.post('/timetable', async (req, res) => {
 router.post('/records', async (req, res) => {
   try {
     const { date, subjectId, status } = req.body;
-    const doc = await getAttendanceDoc();
+    const doc = await getAttendanceDoc(req.user.id);
 
     if (!doc.records) {
       doc.records = new Map();
     }
     
-    // Correct way to write to a Map of Maps in Mongoose
     if (!doc.records.has(date)) {
       doc.records.set(date, new Map());
     }
@@ -83,12 +87,16 @@ router.post('/records', async (req, res) => {
   }
 });
 
-// POST to save entire records object directly (useful for bulk updates)
+// POST to save entire records object directly
 router.post('/records/bulk', async (req, res) => {
   try {
     const { records } = req.body;
-    const doc = await getAttendanceDoc();
+    if (!records || typeof records !== 'object') {
+      return res.status(400).json({ error: 'Records object is required.' });
+    }
+    const doc = await getAttendanceDoc(req.user.id);
     doc.records = records;
+    doc.markModified('records');
     await doc.save();
     res.json(doc);
   } catch (error) {
@@ -100,21 +108,17 @@ router.post('/records/bulk', async (req, res) => {
 router.post('/holidays/toggle', async (req, res) => {
   try {
     const { date } = req.body;
-    const doc = await getAttendanceDoc();
+    const doc = await getAttendanceDoc(req.user.id);
     
-    // Ensure holidays array exists
     if (!doc.holidays) doc.holidays = [];
     
     const index = doc.holidays.indexOf(date);
     if (index > -1) {
-      // Remove it if it exists
       doc.holidays.splice(index, 1);
     } else {
-      // Add it if it doesn't
       doc.holidays.push(date);
     }
     
-    // Note for mongoose array modifications we generally need save()
     await doc.save();
     res.json(doc);
   } catch (error) {

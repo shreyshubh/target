@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 
-// We use a single document for the user since it's a personal app.
 const AttendanceSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
     subjects: [
       {
         id: { type: String, required: true },
@@ -22,13 +27,12 @@ const AttendanceSchema = new mongoose.Schema(
       6: [{ type: String }],
     },
     // Map date string (e.g. "YYYY-MM-DD") to subject IDs attendance status
-    // Example: { "2023-10-25": { "subj1": "present", "subj2": "absent" } }
     records: {
       type: Map,
       of: { type: Map, of: String },
       default: {},
     },
-    // Array of date strings marked as holidays: ["YYYY-MM-DD"]
+    // Array of date strings marked as holidays
     holidays: [{ type: String }],
   },
   { timestamps: true }

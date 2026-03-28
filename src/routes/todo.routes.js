@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Todo = require('../models/Todo.model');
+const authMiddleware = require('../middleware/auth.middleware');
 
-// Get all todos
+// All routes are protected
+router.use(authMiddleware);
+
+// Get all todos for the authenticated user
 router.get('/', async (req, res) => {
   try {
-    // Sort by order ascending, then fallback to newest first
-    const todos = await Todo.find().sort({ order: 1, createdAt: -1 });
+    const todos = await Todo.find({ userId: req.user.id }).sort({ order: 1, createdAt: -1 });
     res.json(todos);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -17,7 +20,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { text, dueDate, priority, order } = req.body;
-    const newTodo = new Todo({ text, dueDate, priority, order });
+    const newTodo = new Todo({ userId: req.user.id, text, dueDate, priority, order });
     const savedTodo = await newTodo.save();
     res.status(201).json(savedTodo);
   } catch (error) {
@@ -25,41 +28,54 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update a todo (e.g., toggle completed)
+// ── IMPORTANT: /reorder/bulk MUST be before /:id ─────────────
+// Reorder todos in bulk
+router.put('/reorder/bulk', async (req, res) => {
+  try {
+    const { updates } = req.body;
+    if (!Array.isArray(updates)) return res.status(400).json({ error: "Updates must be an array" });
+    
+    await Promise.all(
+      updates.map(u => Todo.findOneAndUpdate(
+        { _id: u._id, userId: req.user.id },
+        { order: u.order }
+      ))
+    );
+    res.json({ message: 'Todos reordered successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a todo (scoped to user) — whitelisted fields only
+const ALLOWED_TODO_FIELDS = ['text', 'completed', 'dueDate', 'priority', 'order'];
+
 router.put('/:id', async (req, res) => {
   try {
-    const updatedTodo = await Todo.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
+    // Whitelist fields to prevent injection of userId, _id, etc.
+    const updates = {};
+    for (const key of ALLOWED_TODO_FIELDS) {
+      if (req.body[key] !== undefined) updates[key] = req.body[key];
+    }
+
+    const updatedTodo = await Todo.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.id },
+      { $set: updates },
       { new: true }
     );
+    if (!updatedTodo) return res.status(404).json({ error: 'Todo not found' });
     res.json(updatedTodo);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Delete a todo
+// Delete a todo (scoped to user)
 router.delete('/:id', async (req, res) => {
   try {
-    await Todo.findByIdAndDelete(req.params.id);
+    const result = await Todo.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    if (!result) return res.status(404).json({ error: 'Todo not found' });
     res.json({ message: 'Todo deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Reorder todos in bulk (for drag and drop)
-router.put('/reorder/bulk', async (req, res) => {
-  try {
-    const { updates } = req.body; // Array of { _id, order }
-    if (!Array.isArray(updates)) return res.status(400).json({ error: "Updates must be an array" });
-    
-    // Process sequentially or using Promise.all
-    await Promise.all(
-      updates.map(u => Todo.findByIdAndUpdate(u._id, { order: u.order }))
-    );
-    res.json({ message: 'Todos reordered successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
