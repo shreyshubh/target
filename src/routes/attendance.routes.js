@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Attendance = require('../models/Attendance.model');
 const authMiddleware = require('../middleware/auth.middleware');
+const validate = require('../middleware/validate.middleware');
+const { updateSubjectsSchema, updateTimetableSchema, updateRecordsSchema, bulkRecordsSchema, toggleHolidaySchema } = require('../validations/attendance.validation');
 
 // All routes are protected
 router.use(authMiddleware);
@@ -22,17 +24,17 @@ const getAttendanceDoc = async (userId) => {
 };
 
 // GET full attendance data
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const doc = await getAttendanceDoc(req.user.id);
     res.json(doc);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 
 // POST to update subjects
-router.post('/subjects', async (req, res) => {
+router.post('/subjects', validate(updateSubjectsSchema), async (req, res, next) => {
   try {
     const { subjects } = req.body;
     const doc = await getAttendanceDoc(req.user.id);
@@ -40,12 +42,12 @@ router.post('/subjects', async (req, res) => {
     await doc.save();
     res.json(doc);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 
 // POST to update timetable
-router.post('/timetable', async (req, res) => {
+router.post('/timetable', validate(updateTimetableSchema), async (req, res, next) => {
   try {
     const { timetable } = req.body;
     const doc = await getAttendanceDoc(req.user.id);
@@ -53,12 +55,12 @@ router.post('/timetable', async (req, res) => {
     await doc.save();
     res.json(doc);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 
 // POST to mark/update daily attendance records
-router.post('/records', async (req, res) => {
+router.post('/records', validate(updateRecordsSchema), async (req, res, next) => {
   try {
     const { date, subjectId, status } = req.body;
     const doc = await getAttendanceDoc(req.user.id);
@@ -83,29 +85,26 @@ router.post('/records', async (req, res) => {
     await doc.save();
     res.json(doc);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 
 // POST to save entire records object directly
-router.post('/records/bulk', async (req, res) => {
+router.post('/records/bulk', validate(bulkRecordsSchema), async (req, res, next) => {
   try {
     const { records } = req.body;
-    if (!records || typeof records !== 'object') {
-      return res.status(400).json({ error: 'Records object is required.' });
-    }
     const doc = await getAttendanceDoc(req.user.id);
     doc.records = records;
     doc.markModified('records');
     await doc.save();
     res.json(doc);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 
 // POST to toggle a holiday date
-router.post('/holidays/toggle', async (req, res) => {
+router.post('/holidays/toggle', validate(toggleHolidaySchema), async (req, res, next) => {
   try {
     const { date } = req.body;
     const doc = await getAttendanceDoc(req.user.id);
@@ -122,7 +121,7 @@ router.post('/holidays/toggle', async (req, res) => {
     await doc.save();
     res.json(doc);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 

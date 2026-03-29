@@ -18,6 +18,7 @@ const attendanceRoutes = require('./routes/attendance.routes');
 const todoRoutes = require('./routes/todo.routes');
 const authRoutes = require('./routes/auth.routes');
 const syllabusRoutes = require('./routes/syllabus.routes');
+const errorHandler = require('./middleware/error.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -60,6 +61,9 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/todos', todoRoutes);
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
+
+// ── Global Error Handling Middleware ─────────────────────────
+app.use('/api', errorHandler);
 
 // ── Serve React frontend in production ───────────────────────
 if (isProd) {

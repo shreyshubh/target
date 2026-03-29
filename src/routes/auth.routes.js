@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const User = require('../models/User.model');
 const authMiddleware = require('../middleware/auth.middleware');
 const config = require('../config');
+const validate = require('../middleware/validate.middleware');
+const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema, deleteAccountSchema } = require('../validations/auth.validation');
 
 const router = express.Router();
 
@@ -54,13 +56,9 @@ function generateToken(user) {
 // ══════════════════════════════════════════════════════════════
 // POST /api/auth/register
 // ══════════════════════════════════════════════════════════════
-router.post('/register', authLimiter, async (req, res) => {
+router.post('/register', authLimiter, validate(registerSchema), async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Username, email, and password are required.' });
-    }
 
     // Validate email
     if (!isValidEmail(email)) {
@@ -97,24 +95,19 @@ router.post('/register', authLimiter, async (req, res) => {
       user: { id: user._id, username: user.username, email: user.email },
     });
   } catch (err) {
-    console.error('Register error:', err);
     if (err.code === 11000) {
-      return res.status(409).json({ error: 'Username or email already exists.' });
+      return next({ statusCode: 409, message: 'Username or email already exists.' });
     }
-    res.status(500).json({ error: 'Server error during registration.' });
+    next(err);
   }
 });
 
 // ══════════════════════════════════════════════════════════════
 // POST /api/auth/login
 // ══════════════════════════════════════════════════════════════
-router.post('/login', authLimiter, async (req, res) => {
+router.post('/login', authLimiter, validate(loginSchema), async (req, res, next) => {
   try {
     const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required.' });
-    }
 
     const user = await User.findOne({ username: username.toLowerCase().trim() });
     if (!user) {
@@ -132,8 +125,7 @@ router.post('/login', authLimiter, async (req, res) => {
       user: { id: user._id, username: user.username, email: user.email },
     });
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ error: 'Server error during login.' });
+    next(err);
   }
 });
 
@@ -262,25 +254,22 @@ router.post('/reset-password', authLimiter, async (req, res) => {
 // ══════════════════════════════════════════════════════════════
 // GET /api/auth/me — Get current user info (protected)
 // ══════════════════════════════════════════════════════════════
-router.get('/me', authMiddleware, async (req, res) => {
+router.get('/me', authMiddleware, async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select('-passwordHash -resetCode -resetCodeExpiry -resetAttempts -resetAttemptsExpiry');
     if (!user) return res.status(404).json({ error: 'User not found.' });
     res.json({ id: user._id, username: user.username, email: user.email });
   } catch (err) {
-    res.status(500).json({ error: 'Server error.' });
+    next(err);
   }
 });
 
 // ══════════════════════════════════════════════════════════════
 // PUT /api/auth/change-password (protected) — Feature #1
 // ══════════════════════════════════════════════════════════════
-router.put('/change-password', authMiddleware, async (req, res) => {
+router.put('/change-password', authMiddleware, validate(changePasswordSchema), async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: 'Current and new password are required.' });
-    }
 
     const passwordErrors = validatePassword(newPassword);
     if (passwordErrors.length > 0) {
@@ -300,15 +289,14 @@ router.put('/change-password', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Password changed successfully.' });
   } catch (err) {
-    console.error('Change-password error:', err);
-    res.status(500).json({ error: 'Server error.' });
+    next(err);
   }
 });
 
 // ══════════════════════════════════════════════════════════════
 // PUT /api/auth/profile (protected) — Feature #2
 // ══════════════════════════════════════════════════════════════
-router.put('/profile', authMiddleware, async (req, res) => {
+router.put('/profile', authMiddleware, validate(updateProfileSchema), async (req, res, next) => {
   try {
     const { username, email } = req.body;
     const user = await User.findById(req.user.id);
@@ -340,18 +328,16 @@ router.put('/profile', authMiddleware, async (req, res) => {
       user: { id: user._id, username: user.username, email: user.email },
     });
   } catch (err) {
-    console.error('Profile update error:', err);
-    res.status(500).json({ error: 'Server error.' });
+    next(err);
   }
 });
 
 // ══════════════════════════════════════════════════════════════
 // DELETE /api/auth/account (protected) — Feature #11
 // ══════════════════════════════════════════════════════════════
-router.delete('/account', authMiddleware, async (req, res) => {
+router.delete('/account', authMiddleware, validate(deleteAccountSchema), async (req, res, next) => {
   try {
     const { password } = req.body;
-    if (!password) return res.status(400).json({ error: 'Password is required to delete account.' });
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: 'User not found.' });
@@ -376,8 +362,7 @@ router.delete('/account', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Account and all data deleted successfully.' });
   } catch (err) {
-    console.error('Delete account error:', err);
-    res.status(500).json({ error: 'Server error.' });
+    next(err);
   }
 });
 
