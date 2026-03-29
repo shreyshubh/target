@@ -162,6 +162,15 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
+/* Chrome Autofill Transparent Background Fix */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover, 
+.input:-webkit-autofill:focus, 
+.input:-webkit-autofill:active {
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .eyeBtn {
   background: none;
   border: none;
