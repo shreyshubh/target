@@ -94,7 +94,7 @@ router.post('/track', validate(addTrackSchema), async (req, res, next) => {
 // PUT /api/syllabus/track/:trackId — update a track
 router.put('/track/:trackId', validate(updateTrackSchema), async (req, res, next) => {
   try {
-    const { label, sections } = req.body;
+    const { label, sections, examDate } = req.body;
     const doc = await Syllabus.findOne({ userId: req.user.id });
     if (!doc) return res.status(404).json({ error: 'Syllabus not found.' });
 
@@ -103,6 +103,8 @@ router.put('/track/:trackId', validate(updateTrackSchema), async (req, res, next
 
     if (label !== undefined) track.label = label;
     if (sections !== undefined) track.sections = sections;
+    if (examDate !== undefined) track.examDate = examDate;
+    
     
     await doc.save();
     res.json(doc);

@@ -11,6 +11,7 @@ const SyllabusSchema = new mongoose.Schema(
       {
         id: { type: String, required: true },
         label: { type: String, required: true },
+        examDate: { type: String, default: null }, // 'YYYY-MM-DD'
         sections: [
           {
             title: { type: String, required: true },

@@ -97,6 +97,14 @@ export default function SyllabusManager() {
     }
   };
 
+  const handleUpdateExamDate = async (trackId, dateStr) => {
+    try {
+      await updateTrackMutation.mutateAsync({ trackId, data: { examDate: dateStr || null } });
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const handleAddSection = async (trackId) => {
     if (!newSectionTitle.trim()) return;
     const track = tracks.find(t => t.id === trackId);
@@ -230,7 +238,18 @@ export default function SyllabusManager() {
         {tracks.map((track) => (
           <div key={track.id} className={styles.trackCard}>
             <div className={styles.trackHeader}>
-              <h3 className={styles.trackLabel}>{track.label}</h3>
+              <h3 className={styles.trackLabel}>
+                {track.label}
+                <div style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '12px', fontSize: '12px', fontWeight: 'normal', gap: '6px' }}>
+                  <span title="Set a target exam date to calculate study deadlines">🎯 Target Date:</span>
+                  <input 
+                    type="date"
+                    value={track.examDate || ''}
+                    onChange={(e) => handleUpdateExamDate(track.id, e.target.value)}
+                    style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px', padding: '2px 4px', fontSize: '12px', fontFamily: 'inherit', colorScheme: 'dark' }}
+                  />
+                </div>
+              </h3>
               <div className={styles.trackActions}>
                 <span className={styles.badge}>{track.sections.length} sections</span>
                 <button

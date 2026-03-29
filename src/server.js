@@ -18,7 +18,10 @@ const attendanceRoutes = require('./routes/attendance.routes');
 const todoRoutes = require('./routes/todo.routes');
 const authRoutes = require('./routes/auth.routes');
 const syllabusRoutes = require('./routes/syllabus.routes');
+const studyRoutes = require('./routes/study.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
 const errorHandler = require('./middleware/error.middleware');
+const activityLogger = require('./middleware/activity.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -54,11 +57,16 @@ app.use((req, _res, next) => {
 app.use(mongoSanitize());                          // Prevent NoSQL injection ($gt, $ne etc.)
 
 // ── API Routes ───────────────────────────────────────────────
+// Log ALL mutating POST/PUT/DELETE requests securely (if authenticated)
+app.use(activityLogger);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/syllabus', syllabusRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/todos', todoRoutes);
+app.use('/api/study', studyRoutes);
+app.use('/api/analytics', analyticsRoutes);
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
 

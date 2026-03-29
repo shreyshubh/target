@@ -26,12 +26,6 @@ const AttendanceSchema = new mongoose.Schema(
       5: [{ type: String }],
       6: [{ type: String }],
     },
-    // Map date string (e.g. "YYYY-MM-DD") to subject IDs attendance status
-    records: {
-      type: Map,
-      of: { type: Map, of: String },
-      default: {},
-    },
     // Array of date strings marked as holidays
     holidays: [{ type: String }],
   },

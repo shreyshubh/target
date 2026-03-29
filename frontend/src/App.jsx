@@ -14,6 +14,8 @@ import SettingsPage from './pages/SettingsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import PomodoroTimer from './components/PomodoroTimer';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import styles from './App.module.css';
 import './AppNav.css';
 
@@ -245,6 +247,7 @@ function AppLayout() {
       </div>
 
       <div className="mainNav">
+        <NavLink to="/dashboard" className={({ isActive }) => isActive ? "activeNav" : ""}>Dashboard</NavLink>
         <NavLink to="/syllabus" className={({ isActive }) => isActive ? "activeNav" : ""}>Syllabus</NavLink>
         <NavLink to="/attendance" className={({ isActive }) => isActive ? "activeNav" : ""}>Attendance</NavLink>
         <NavLink to="/todo" className={({ isActive }) => isActive ? "activeNav" : ""}>To-Do List</NavLink>
@@ -252,6 +255,12 @@ function AppLayout() {
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+          <Route path="/dashboard" element={
+            <motion.main className="mainContent" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }}>
+              <AnalyticsDashboard />
+            </motion.main>
+          } />
+          
           <Route path="/syllabus" element={
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }}>
               <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 16px 0', gap: '8px', flexWrap: 'wrap' }}>
@@ -349,9 +358,10 @@ function AppLayout() {
             </motion.main>
           } />
 
-          <Route path="*" element={<Navigate to="/syllabus" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AnimatePresence>
+      <PomodoroTimer />
     </div>
   );
 }
@@ -362,9 +372,9 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/syllabus" replace /> : <LoginPage />} />
-      <Route path="/register" element={isAuthenticated ? <Navigate to="/syllabus" replace /> : <RegisterPage />} />
-      <Route path="/forgot-password" element={isAuthenticated ? <Navigate to="/syllabus" replace /> : <ForgotPasswordPage />} />
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+      <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
+      <Route path="/forgot-password" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />} />
       <Route path="/*" element={isAuthenticated ? <AppLayout /> : <Navigate to="/login" replace />} />
     </Routes>
   );

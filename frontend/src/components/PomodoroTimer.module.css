@@ -1,0 +1,139 @@
+.floatingFab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4);
+  cursor: pointer;
+  z-index: 9999;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.floatingFab:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(108, 92, 231, 0.5);
+}
+
+.timerWidget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(45, 52, 54, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h4 {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #b2bec3;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.closeBtn:hover {
+  color: #ff7675;
+}
+
+.timeDisplay {
+  font-size: 56px;
+  font-weight: 800;
+  text-align: center;
+  color: #a29bfe;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(162, 155, 254, 0.3);
+}
+
+.subjectSelect {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.2);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.subjectSelect:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.mainBtn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #00cec9;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mainBtn:hover {
+  background: #81ecec;
+}
+
+.resetBtn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: #dfe6e9;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.resetBtn:hover {
+  background: rgba(255,255,255,0.05);
+}
