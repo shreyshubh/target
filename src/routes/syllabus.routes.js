@@ -3,7 +3,7 @@ const router = express.Router();
 const Syllabus = require('../models/Syllabus.model');
 const authMiddleware = require('../middleware/auth.middleware');
 const validate = require('../middleware/validate.middleware');
-const { updateSyllabusSchema } = require('../validations/syllabus.validation');
+const { updateSyllabusSchema, addTrackSchema, updateTrackSchema, addSectionSchema } = require('../validations/syllabus.validation');
 
 // All routes are protected
 router.use(authMiddleware);
