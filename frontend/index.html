@@ -4,9 +4,72 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="CS Master Syllabus — track your progress across DSA, Core CS, System Design, AI/ML, and GRE prep." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>CS Master Syllabus</title>
+    <style>
+      /* Pre-React splash — pure CSS, no JS needed */
+      #pre-react-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #172554 100%);
+        z-index: 99999;
+        font-family: 'Outfit', -apple-system, sans-serif;
+        color: #cbd5e1;
+        gap: 24px;
+        transition: opacity 0.4s ease;
+      }
+      .pre-splash-icon {
+        font-size: 48px;
+        animation: pre-bounce 2s ease-in-out infinite;
+      }
+      .pre-splash-title {
+        font-size: 22px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #e0e7ff, #a78bfa, #38bdf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .pre-splash-bar {
+        width: 200px;
+        height: 4px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 100px;
+        overflow: hidden;
+      }
+      .pre-splash-bar-fill {
+        height: 100%;
+        width: 40%;
+        background: linear-gradient(90deg, #8b5cf6, #38bdf8);
+        border-radius: 100px;
+        animation: pre-slide 1.5s ease-in-out infinite;
+      }
+      @keyframes pre-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+      @keyframes pre-slide {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(400%); }
+      }
+    </style>
   </head>
   <body>
+    <!-- Pre-React splash: visible instantly, removed when React mounts -->
+    <div id="pre-react-splash">
+      <div class="pre-splash-icon">📚</div>
+      <div class="pre-splash-title">CS Master Syllabus</div>
+      <div class="pre-splash-bar">
+        <div class="pre-splash-bar-fill"></div>
+      </div>
+      <div style="font-size: 13px; color: #64748b;">Loading app...</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

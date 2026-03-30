@@ -7,8 +7,10 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          recharts: ['recharts'],
+        manualChunks(id) {
+          if (id.includes('node_modules/recharts')) {
+            return 'recharts';
+          }
         },
       },
     },

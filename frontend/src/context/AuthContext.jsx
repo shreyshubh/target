@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { apiLogout, apiCheckSession } from '../api';
+import SplashScreen from '../components/SplashScreen';
 
 const AuthContext = createContext(null);
 
@@ -15,6 +16,11 @@ export function AuthProvider({ children }) {
 
   // On mount: ask the server if we have a valid session (cookie is sent automatically)
   useEffect(() => {
+    // Remove the pre-React HTML splash as soon as React mounts
+    // so our animated React SplashScreen can be seen during the cold start delay
+    const htmlSplash = document.getElementById('pre-react-splash');
+    if (htmlSplash) htmlSplash.remove();
+
     apiCheckSession()
       .then((data) => {
         if (data) setUser(data);
@@ -22,7 +28,9 @@ export function AuthProvider({ children }) {
       .catch(() => {
         // No valid session — just stay logged out
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   // Called after successful login/register — server already set the cookie
@@ -38,17 +46,9 @@ export function AuthProvider({ children }) {
 
   const isAuthenticated = !!user;
 
-  // Show nothing while checking session to prevent flash of login page
+  // Show animated splash screen while checking session (covers Render cold starts)
   if (loading) {
-    return (
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        height: '100vh', background: '#1a1a2e', color: '#a29bfe',
-        fontSize: '16px', fontFamily: 'Inter, sans-serif',
-      }}>
-        Loading…
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   return (
