@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
 import ActivityHeatmap from './ActivityHeatmap';
+import MotivationalQuote from './MotivationalQuote';
 import { fetchSyllabus, fetchProgress } from '../api';
 
 const COLORS = ['#00cec9', '#6c5ce7', '#fdcb6e', '#ff7675', '#00b894', '#0984e3'];
@@ -117,6 +118,8 @@ export default function AnalyticsDashboard() {
       ) : (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           
+          <MotivationalQuote />
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '24px' }}>
             {/* Box 1: Recharts Hours Studied */}
             <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px' }}>
