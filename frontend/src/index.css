@@ -54,20 +54,31 @@ body {
   flex-direction: column;
 }
 
-/* ─── Custom scrollbar ─── */
+/* ─── Custom scrollbar (always visible, styled) ─── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.2);
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 4px;
+  background: linear-gradient(180deg, #6c5ce7, #a29bfe);
+  border-radius: 8px;
+  border: 2px solid rgba(15, 23, 42, 0.5);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: linear-gradient(180deg, #5f4dd0, #8b7cf6);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #6c5ce7 rgba(15, 23, 42, 0.5);
 }
 
 /* ─── Reusable Glass Container Class ─── */
