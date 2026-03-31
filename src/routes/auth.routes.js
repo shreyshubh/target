@@ -163,21 +163,26 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
         auth: { user: emailUser, pass: emailPass },
       });
 
-      await transporter.sendMail({
-        from: `"Syllabus Tracker" <${emailUser}>`,
-        to: user.email,
-        subject: 'Password Reset Code',
-        html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: 0 auto;">
-            <h2 style="color: #6c5ce7;">Password Reset</h2>
-            <p>Your verification code is:</p>
-            <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #2d3436;">
-              ${code}
+      try {
+        await transporter.sendMail({
+          from: `"Syllabus Tracker" <${emailUser}>`,
+          to: user.email,
+          subject: 'Password Reset Code',
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: 0 auto;">
+              <h2 style="color: #6c5ce7;">Password Reset</h2>
+              <p>Your verification code is:</p>
+              <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #2d3436;">
+                ${code}
+              </div>
+              <p style="color: #636e72; margin-top: 15px;">This code expires in 15 minutes.</p>
             </div>
-            <p style="color: #636e72; margin-top: 15px;">This code expires in 15 minutes.</p>
-          </div>
-        `,
-      });
+          `,
+        });
+      } catch (emailErr) {
+        console.error('Failed to send reset email:', emailErr);
+        // Continue to send the generic success message
+      }
     } else {
       // Dev mode: log the code
       console.log(`🔑 Password reset code for ${user.email}: ${code}`);

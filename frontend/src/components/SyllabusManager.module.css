@@ -38,16 +38,17 @@
   outline: none;
   transition: border-color 0.2s;
   font-family: inherit;
-  background: #fff;
+  background: rgba(15, 23, 42, 0.4);
 }
 
 .input:focus {
-  border-color: #6c5ce7;
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 0 2px var(--accent-bg);
 }
 
 .addBtn {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -57,11 +58,12 @@
   white-space: nowrap;
   transition: transform 0.2s, box-shadow 0.2s;
   font-family: inherit;
+  box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 .addBtn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
 }
 
 .addBtn:disabled {
@@ -73,7 +75,7 @@
 .empty {
   text-align: center;
   padding: 60px 20px;
-  color: #b2bec3;
+  color: var(--text-secondary);
 }
 
 .emptyIcon {
@@ -84,7 +86,7 @@
 .loading {
   text-align: center;
   padding: 40px;
-  color: #636e72;
+  color: var(--text-tertiary);
   font-size: 16px;
 }
 
@@ -96,15 +98,19 @@
 }
 
 .trackCard {
-  background: #fff;
-  border: 1px solid #dfe6e9;
+  background: var(--surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .trackCard:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
 }
 
 .trackHeader {
@@ -117,7 +123,7 @@
 .trackLabel {
   font-size: 18px;
   font-weight: 600;
-  color: #2d3436;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -129,27 +135,31 @@
 
 .badge {
   font-size: 11px;
-  color: #6c5ce7;
-  background: rgba(108, 92, 231, 0.1);
+  color: #fff;
+  background: var(--accent);
   padding: 4px 10px;
   border-radius: 20px;
   font-weight: 500;
+  box-shadow: 0 2px 8px var(--accent-glow);
 }
 
 .deleteBtn {
-  background: none;
+  background: rgba(239, 68, 68, 0.1);
   border: none;
   cursor: pointer;
   font-size: 16px;
   padding: 4px 6px;
   opacity: 0.5;
-  transition: opacity 0.2s;
+  color: var(--danger);
+  transition: opacity 0.2s, transform 0.2s;
   border-radius: 6px;
 }
 
 .deleteBtn:hover {
   opacity: 1;
-  background: rgba(255, 107, 107, 0.1);
+  background: var(--danger);
+  color: #fff;
+  transform: scale(1.1);
 }
 
 /* ─── Section Card ─── */
@@ -161,7 +171,8 @@
 }
 
 .sectionCard {
-  background: #f8f9fa;
+  background: var(--surface-raised);
+  border: 1px solid rgba(255,255,255,0.05);
   border-radius: 12px;
   padding: 14px 16px;
 }
@@ -176,7 +187,7 @@
 .sectionTitle {
   font-size: 15px;
   font-weight: 600;
-  color: #2d3436;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -188,40 +199,43 @@
 
 .topicCount {
   font-size: 11px;
-  color: #636e72;
+  color: var(--text-secondary);
 }
 
 .smallBtn {
   font-size: 11px;
-  color: #6c5ce7;
-  background: rgba(108, 92, 231, 0.08);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  color: var(--accent);
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
   border-radius: 6px;
   padding: 3px 8px;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .smallBtn:hover {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px var(--accent-glow);
 }
 
 .deleteSectionBtn {
   font-size: 12px;
-  color: #ff6b6b;
-  background: none;
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
   border: none;
   cursor: pointer;
   padding: 2px 6px;
   opacity: 0.5;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
   border-radius: 4px;
 }
 
 .deleteSectionBtn:hover {
   opacity: 1;
-  background: rgba(255, 107, 107, 0.1);
+  background: var(--danger);
+  color: #fff;
 }
 
 /* ─── Topic List ─── */
@@ -242,23 +256,23 @@
 }
 
 .topicItem:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .topicText {
   font-size: 13px;
-  color: #636e72;
+  color: var(--text-secondary);
 }
 
 .topicDeleteBtn {
   font-size: 10px;
-  color: #b2bec3;
+  color: var(--text-tertiary);
   background: none;
   border: none;
   cursor: pointer;
   padding: 2px 4px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
   border-radius: 4px;
 }
 
@@ -267,7 +281,8 @@
 }
 
 .topicDeleteBtn:hover {
-  color: #ff6b6b;
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* ─── Inline Form (add section / topic) ─── */
@@ -280,21 +295,22 @@
 .inlineInput {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #dfe6e9;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 13px;
   outline: none;
   font-family: inherit;
-  background: #fff;
+  background: rgba(15, 23, 42, 0.5);
+  color: var(--text-primary);
 }
 
 .inlineInput:focus {
-  border-color: #6c5ce7;
+  border-color: var(--accent-hover);
 }
 
 .inlineBtn {
   padding: 8px 14px;
-  background: #6c5ce7;
+  background: var(--accent);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -302,37 +318,38 @@
   cursor: pointer;
   font-family: inherit;
   transition: background 0.2s;
+  font-weight: 600;
 }
 
 .inlineBtn:hover {
-  background: #5f4dd0;
+  background: var(--accent-hover);
 }
 
 .cancelBtn {
   padding: 8px 14px;
-  background: #dfe6e9;
-  color: #636e72;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
   border: none;
   border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .cancelBtn:hover {
-  background: #b2bec3;
-  color: #2d3436;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
 }
 
 /* ─── Add Section Button ─── */
 .addSectionBtn {
   width: 100%;
   padding: 10px;
-  background: none;
-  border: 2px dashed #dfe6e9;
+  background: rgba(15, 23, 42, 0.3);
+  border: 1px dashed var(--border-strong);
   border-radius: 10px;
-  color: #b2bec3;
+  color: var(--text-secondary);
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
@@ -340,9 +357,9 @@
 }
 
 .addSectionBtn:hover {
-  border-color: #6c5ce7;
-  color: #6c5ce7;
-  background: rgba(108, 92, 231, 0.03);
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 /* ─── Template Button & List ─── */

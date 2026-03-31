@@ -246,7 +246,7 @@ export default function SyllabusManager() {
                     type="date"
                     value={track.examDate || ''}
                     onChange={(e) => handleUpdateExamDate(track.id, e.target.value)}
-                    style={{ background: '#f8f9fa', border: '1px solid #dfe6e9', color: '#2d3436', borderRadius: '6px', padding: '4px 8px', fontSize: '12px', fontFamily: 'inherit' }}
+                    style={{ background: 'rgba(15, 23, 42, 0.5)', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: '6px', padding: '4px 8px', fontSize: '12px', fontFamily: 'inherit', colorScheme: 'dark' }}
                   />
                 </div>
               </h3>
